@@ -282,16 +282,18 @@ func RegisterNamespaceWithRetry(ctx context.Context, egrp *errgroup.Group) error
 	if err = registerNamespaceImpl(key, prefix, url); err == nil {
 		return nil
 	}
-	log.Errorf("Failed to register with namespace service: %v; will automatically retry in 10 seconds\n", err)
+
+	retrydelay := 1000
+	log.Errorf("Failed to register with namespace service: %v; will automatically retry in %d seconds\n", err, retrydelay)
 	egrp.Go(func() error {
-		ticker := time.NewTicker(10 * time.Second)
+		ticker := time.NewTicker(time.Second * time.Duration(retrydelay))
 		for {
 			select {
 			case <-ticker.C:
 				if err := registerNamespaceImpl(key, prefix, url); err == nil {
 					return nil
 				}
-				log.Errorf("Failed to register with namespace service: %v; will automatically retry in 10 seconds\n", err)
+				log.Errorf("Failed to register with namespace service: %v; will automatically retry in %d seconds\n", err, retrydelay)
 			case <-ctx.Done():
 				return nil
 			}
