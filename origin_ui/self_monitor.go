@@ -45,8 +45,9 @@ func doSelfMonitor(ctx context.Context) {
 // a generated filename every 15 seconds to the local origin.  On failure, it will
 // set the xrootd component's status to critical.
 func PeriodicSelfTest(ctx context.Context) error {
+	selfTestFrequency := 150
 	firstRound := time.After(5 * time.Second)
-	ticker := time.NewTicker(15 * time.Second)
+	ticker := time.NewTicker(time.Duration(selfTestFrequency) * time.Second)
 	for {
 		select {
 		case <-firstRound:
