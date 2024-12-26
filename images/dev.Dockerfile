@@ -35,7 +35,7 @@ RUN useradd -o -u 10940 -g 10940 -s /bin/sh xrootd
 # Install EPEL and OSG repos -- we want OSG-patched versions of XRootD
 RUN yum install -y \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
-    https://repo.opensciencegrid.org/osg/23-main/osg-23-main-el9-release-latest.rpm \
+    https://repo.osg-htc.org/osg/24-main/osg-24-main-el9-release-latest.rpm \
     yum-utils && \
     /usr/bin/crb enable && \
     # ^^ crb enables the Code Ready Builder repository (EL9) or PowerTools (EL8), needed for some of our dependencies \

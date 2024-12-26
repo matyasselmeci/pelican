@@ -17,7 +17,7 @@
 # ***************************************************************
 
 ARG BASE_YUM_REPO=release
-ARG BASE_OSG_SERIES=23
+ARG BASE_OSG_SERIES=24
 ARG BASE_OS=el9
 
 FROM goreleaser/goreleaser:v1.21.0 AS pelican-build
