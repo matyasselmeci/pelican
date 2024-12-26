@@ -48,12 +48,12 @@ RUN useradd -o -u 10940 -g 10940 -s /bin/sh xrootd
 
 # Install dependencies
 RUN yum -y update \
-    && yum -y --allowerasing --enablerepo osg-testing install tini xrootd xrootd-client xrdcl-http xrootd-server xrootd-scitokens xrootd-voms xrootd-multiuser curl java-17-openjdk-headless \
+    && yum -y --allowerasing --enablerepo osg-testing install tini xrootd xrootd-client xrdcl-pelican xrootd-server xrootd-scitokens xrootd-voms xrootd-multiuser curl java-17-openjdk-headless \
     && yum clean all \
     && rm -rf /var/cache/yum/
 
 ####
-# Start building xrootd plugins (xrdcl-pelican and s3)
+# Start building xrootd plugins (s3)
 ####
 FROM dependency-build AS xrootd-plugin-builder
 # Install necessary build dependencies
@@ -62,11 +62,6 @@ RUN  yum install -y --enablerepo=osg-testing xrootd-devel xrootd-server-devel xr
 # The ADD command with a api.github.com URL in the next couple of sections
 # are for cache-hashing of the external repository that we rely on to build
 # the image
-ADD https://api.github.com/repos/PelicanPlatform/xrdcl-pelican/git/refs/heads/main /tmp/hash-xrdcl-pelican
-
-# Install xrdcl-pelican plugin
-RUN \
-    yum install -y --enablerepo=osg-testing xrdcl-pelican
 
 ADD https://api.github.com/repos/PelicanPlatform/xrootd-s3-http/git/refs/heads/main /tmp/hash-xrootd-s3-http
 
@@ -174,8 +169,6 @@ ENV JAVA_HOME=/usr/lib/jvm/jre \
 
 # Copy xrdcl-pelican plugin config
 COPY --from=xrootd-plugin-builder /etc/xrootd/client.plugins.d/pelican-plugin.conf /etc/xrootd/client.plugins.d/pelican-plugin.conf
-# Remove http plugin to use pelican plugin
-RUN rm -f /etc/xrootd/client.plugins.d/xrdcl-http-plugin.conf
 
 # Copy built s3 plugin library and xrdcl-pelican plugin library from build
 COPY --from=xrootd-plugin-builder /usr/lib64/libXrdS3-5.so /usr/lib64/libXrdHTTPServer-5.so /usr/lib64/libXrdClPelican-5.so \
