@@ -53,16 +53,11 @@ RUN yum -y update \
     && rm -rf /var/cache/yum/
 
 ####
-# Start building xrootd plugins (xrdcl-pelican and s3)
+# Start building xrootd plugins (s3)
 ####
 FROM dependency-build AS xrootd-plugin-builder
 # Install necessary build dependencies
-RUN  yum install -y --enablerepo=osg-testing xrootd-devel xrootd-server-devel xrootd-client-devel curl-devel openssl-devel git cmake3 gcc-c++ sqlite-devel
-
-# The ADD command with a api.github.com URL in the next couple of sections
-# are for cache-hashing of the external repository that we rely on to build
-# the image
-ADD https://api.github.com/repos/PelicanPlatform/xrdcl-pelican/git/refs/heads/main /tmp/hash-xrdcl-pelican
+RUN  yum install -y --enablerepo=osg-testing xrootd-devel xrootd-server-devel xrootd-client-devel curl-devel openssl-devel git cmake3 gcc-c++ sqlite-devel nlohmann-json-devel json-schema-validator-devel
 
 # Install xrdcl-pelican plugin
 RUN \
@@ -72,7 +67,7 @@ ADD https://api.github.com/repos/PelicanPlatform/xrootd-s3-http/git/refs/heads/m
 
 # Install the S3 and HTTP server plugins for XRootD. For now we do this from source
 # until we can sort out the RPMs.
-# Ping the http plugin at a specific commit
+# Pin the http plugin at a specific commit
 RUN \
     git clone --recurse-submodules https://github.com/PelicanPlatform/xrootd-s3-http.git && \
     cd xrootd-s3-http && \
@@ -81,22 +76,11 @@ RUN \
     cmake -DLIB_INSTALL_DIR=/usr/lib64 .. && \
     make install
 
-ADD https://api.github.com/repos/nlohmann/json/git/refs/heads/master /tmp/hash-json
-ADD https://api.github.com/repos/pboettch/json-schema-validator/git/refs/heads/master /tmp/hash-json
 ADD https://api.github.com/repos/PelicanPlatform/lotman/git/refs/heads/main /tmp/hash-json
 
 # LotMan Installation
-# First install dependencies
-RUN git clone https://github.com/nlohmann/json.git && \
-    cd json && mkdir build && \
-    cd build && cmake .. && \
-    make -j`nproc` install
-RUN git clone https://github.com/pboettch/json-schema-validator.git && \
-    cd json-schema-validator && mkdir build && \
-    cd build && cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
-    make -j`nproc` install
-#Finally LotMan proper. For now we do this from source until we can sort out the RPMs.
-#Ping LotMan at a specific commit
+# For now we do this from source until we can sort out the RPMs.
+# Pin LotMan at a specific commit
 RUN \
     git clone https://github.com/PelicanPlatform/lotman.git && \
     cd lotman && \
