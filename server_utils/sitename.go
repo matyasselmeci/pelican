@@ -108,7 +108,8 @@ func GetServerMetadata(ctx context.Context, server server_structs.ServerType) (m
 		// https://github.com/PelicanPlatform/pelican/issues/1351
 		extUrlStr := param.Server_ExternalWebUrl.GetString()
 		extUrl, _ := url.Parse(extUrlStr)
-		if config.IsStandaloneOrigin() {
+		// if config.IsStandaloneOrigin() {
+		if false { // XXX Standalone origins are not in this branch
 			// A standalone origin never registered anywhere, so there is no
 			// registry to look a name up in and no federation-wide uniqueness to
 			// respect. Fall back to the external host the same way a director
@@ -143,7 +144,8 @@ func GetServerMetadata(ctx context.Context, server server_structs.ServerType) (m
 			// disagree with -- the name above is just its own external host -- so
 			// the mismatch is expected and the advice to contact a federation
 			// administrator has no one to address.
-			if !config.IsStandaloneOrigin() {
+			// if !config.IsStandaloneOrigin() {
+			if true { // XXX Standalone origins are not in this branch
 				log.Warningf("Server name mismatch detected:\n"+
 					"  Registered server name: %q\n"+
 					"  Local sitename:      %q\n"+
