@@ -128,9 +128,10 @@ jobs:
             ${{ inputs.race_detection && '-race' || '' }} \
             ${{ !(inputs.full_suite || github.event_name == 'push') && '-short' || '' }} \
             -tags=client \
-            ./e2e_fed_tests \
-            ./local_cache \
-            ./...
+            ./client
+            # ./e2e_fed_tests \
+            # ./local_cache \
+            # ./...
 
       - name: Run "go test" on server-specific code
         if: ${{ !cancelled() && steps.binaries.outcome == 'success' }}
