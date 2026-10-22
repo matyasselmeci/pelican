@@ -156,6 +156,10 @@ sudo ln -s "$PWD/release_dir/lib/libXrdOssS3-6.so" "$xrootd_libdir/libXrdOssS3.s
 sudo ln -s "$PWD/release_dir/lib/libXrdOssFilter-6.so" "$xrootd_libdir/libXrdOssFilter.so"
 sudo ln -s "$PWD/release_dir/lib/libXrdOssPosc-6.so" "$xrootd_libdir/libXrdOssPosc.so"
 sudo ln -s "$PWD/release_dir/lib/libXrdN2NPrefix-6.so" "$xrootd_libdir/libXrdN2NPrefix.so"
+
+echo "**** PRINTING INSTALLED XROOTD LIB FILE LIST ****"
+find "$xrootd_libdir" -ls
+
 popd
 
 popd
