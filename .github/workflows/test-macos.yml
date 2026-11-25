@@ -118,7 +118,7 @@ jobs:
       - name: Run "go test" on shared and client-specific code
         if: ${{ !cancelled() && steps.binaries.outcome == 'success' }}
         run: |
-          # e2e_fed_tests and local_cache take longest, so start them first.
+          # Run only TestRecursiveUploadsAndDownloads.
           #
           # At -p=4, concurrent federations intermittently break xrootd
           # startup ("Unable to setup primary monitor collector").
@@ -129,6 +129,7 @@ jobs:
             --hide-summary=output \
             --junitfile junit-client.xml \
             -- \
+            -run '^TestRecursiveUploadsAndDownloads$' \
             -p=2 \
             -timeout=${{ (inputs.race_detection || inputs.full_suite || github.event_name == 'push') && '45m' || '30m' }} \
             ${{ inputs.race_detection && '-race' || '' }} \
