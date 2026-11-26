@@ -129,7 +129,7 @@ jobs:
             --hide-summary=output \
             --junitfile junit-client.xml \
             -- \
-            -run '^TestRecursiveUploadsAndDownloads$' \
+            -run '^TestRecursiveUploadsAndDownloads|TestSyncUpload|TestObjectPut' \
             -p=2 \
             -timeout=${{ (inputs.race_detection || inputs.full_suite || github.event_name == 'push') && '45m' || '30m' }} \
             ${{ inputs.race_detection && '-race' || '' }} \
