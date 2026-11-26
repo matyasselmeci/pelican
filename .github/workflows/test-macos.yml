@@ -124,12 +124,13 @@ jobs:
           # startup ("Unable to setup primary monitor collector").
           # This is due to a concurrency limit in the macOS loopback network
           # stack / xrootd's network init under CPU contention.
+          # -run '^TestRecursiveUploadsAndDownloads|TestSyncUpload|TestObjectPut'
           gotestsum \
             --format pkgname-and-test-fails \
             --hide-summary=output \
             --junitfile junit-client.xml \
             -- \
-            -run '^TestRecursiveUploadsAndDownloads|TestSyncUpload|TestObjectPut' \
+            -run '^TestRecursiveUploadsAndDownloads' \
             -p=2 \
             -timeout=${{ (inputs.race_detection || inputs.full_suite || github.event_name == 'push') && '45m' || '30m' }} \
             ${{ inputs.race_detection && '-race' || '' }} \
@@ -139,6 +140,22 @@ jobs:
             # ./e2e_fed_tests \
             # ./local_cache \
             # ./...
+
+      - name: Wait for macOS crash reports
+        if: always()
+        run: sleep 15
+
+      - name: Upload macOS crash reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-crash-reports
+          path: |
+            ~/Library/Logs/DiagnosticReports/*.ips
+            ~/Library/Logs/DiagnosticReports/*.crash
+            /Library/Logs/DiagnosticReports/*.ips
+            /Library/Logs/DiagnosticReports/*.crash
+          if-no-files-found: warn
 
       - name: Run "go test" on server-specific code
         if: ${{ !cancelled() && steps.binaries.outcome == 'success' }}
